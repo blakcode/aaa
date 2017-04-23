@@ -1,0 +1,103 @@
+%macro read 2
+ mov eax,0
+ mov edi,0
+ mov esi,%1
+ mov edx,%2
+ syscall
+%endmacro
+%macro write 2
+  mov eax,0
+  mov edi,0
+  mov esi,%1
+  mov edx,%2
+%endmacro
+
+section .data
+     msg1 db "ENTER  THE FIRST NUMBER:-",10,13
+     len1 equ $-msg1
+     msg2 db "ENTER THE SECOND NUMBER:-",10,13
+     len2 equ $-msg2
+     msg3 db " THE RESULT IS :-",10,13
+     len3 equ $-msg3
+
+section .bss
+     
+   no1 resb 13
+   no2 resb 13
+   result resb 13
+   mul1 resb 13
+   mul2 resb 13
+
+
+section .text
+
+ global _start:
+
+     _start:
+ 
+      write msg1,len1
+      read no1,3
+      call accept
+      mov [mul1],bl
+
+      write msg2,len2
+      read no2,3
+      call accept
+      mov [mul2],bl
+
+     write msg3,len3
+     mov bl,00
+     mov cl,[mul2]
+     mov al,[mul1]
+ 
+t1:  add bl,al
+     dec cl
+     jnz t1
+     write no2,4  
+     
+     
+ exit
+  
+accept:
+     mov bl,00
+     mov ecx,02
+     mov esi,[no1]
+
+  l1:shl bl,4
+     mov al,[esi]
+     cmp al,39h
+     jbe l2
+     sub al,07h
+l2: sub al,30h
+    add bl,al
+    inc esi
+    dec ecx
+    jnz l1
+    ret
+
+
+display:
+
+  mov ecx,4
+  mov edi,no2
+l3:
+ rol bx,4
+ mov al,bl
+ and al,0fh
+ cmp al,09h
+jbe l4
+ add al,07h
+ l4:
+ add al,30h
+ mov[edi],al
+ inc edi 
+ dec ecx
+ jnz l3
+ret
+
+
+
+
+
+ 
+ 
